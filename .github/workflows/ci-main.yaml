@@ -85,3 +85,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [build-and-push-docker-image]
     name: GitOps Versioning
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
