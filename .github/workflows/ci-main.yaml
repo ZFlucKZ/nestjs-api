@@ -1,0 +1,87 @@
+name: CI for NestJS API Production
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_NAME: nestjs-api
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Node.
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - name: Test Coverage
+        run: npm run test:cov
+      - name: Upload Coverage
+        uses: action/upload-artifact@v4
+        with:
+          name: coverage
+          path: ./coverage
+  sonarqube:
+    runs-on: ubuntu-22.04
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        name: Download coverage file
+        with:
+          name: coverage
+          path: ./
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.inclusions=**/*.spec.ts
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.coverageReportPaths=coverage/coverage-final.json
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.language=ts
+      - name: SonarQube Quality Gate
+        uses: sonarsource/sonarcloud-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  build-and-push-docker-image:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-22.04
+    needs: [sonarqube]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup SHA
+        run: echo "GITHUB_SHA=${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: ${{ github.ref == 'refs/heads/main' }}
+          image: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
+          tags: latest, ${{ env.GITHUB_SHA }}
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  gitops-versioning:
+    runs-on: ubuntu-22.04
+    needs: [build-and-push-docker-image]
+    name: GitOps Versioning
