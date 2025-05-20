@@ -61,7 +61,7 @@ jobs:
   build-and-push-docker-image:
     name: Build and Push Docker Image
     runs-on: ubuntu-22.04
-    # needs: [sonarqube]
+    needs: [test]
     steps:
       - uses: actions/checkout@v4
       - name: Setup SHA
@@ -76,11 +76,11 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.ref == 'refs/heads/main' }}
-          image: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
-          tags: latest, ${{ env.GITHUB_SHA }}
+          # image: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.GITHUB_SHA }}
       - name: Image digest
-        # run: echo ${{ steps.docker_build.outputs.digest }}
-        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
+        run: echo ${{ steps.docker_build.outputs.digest }}
+        # run: echo ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
 
   gitops-versioning:
     runs-on: ubuntu-22.04
