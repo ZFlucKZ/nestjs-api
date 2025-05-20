@@ -10,6 +10,7 @@ env:
 
 jobs:
   test:
+    name: Test Coverage
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
@@ -89,3 +90,5 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
