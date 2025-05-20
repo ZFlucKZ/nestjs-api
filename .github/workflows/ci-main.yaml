@@ -22,7 +22,7 @@ jobs:
       - name: Test Coverage
         run: npm run test:cov
       - name: Upload Coverage
-        uses: action/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: ./coverage
