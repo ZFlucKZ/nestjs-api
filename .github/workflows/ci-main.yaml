@@ -39,7 +39,7 @@ jobs:
           name: coverage
           path: ./
       - name: SonarQube Scan
-        uses: sonarsource/sonarcloud-scan-action@master
+        uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -53,7 +53,7 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.language=ts
       - name: SonarQube Quality Gate
-        uses: sonarsource/sonarcloud-quality-gate-action@master
+        uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
