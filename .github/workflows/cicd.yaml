@@ -3,7 +3,7 @@ name: CI for NestJS API Production
 on:
   push:
     branches:
-      - main
+      - develop
 
 env:
   PROJECT_NAME: nestjs-api
@@ -76,9 +76,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: ${{ github.ref == 'refs/heads/develop' }}
           # image: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.GITHUB_SHA }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:develop
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
         # run: echo ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
