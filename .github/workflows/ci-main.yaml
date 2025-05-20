@@ -26,38 +26,38 @@ jobs:
         with:
           name: coverage
           path: ./coverage
-  sonarqube:
-    runs-on: ubuntu-22.04
-    needs: [test]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/download-artifact@v4
-        name: Download coverage file
-        with:
-          name: coverage
-          path: ./
-      # - name: SonarQube Scan
-      #   uses: sonarsource/sonarqube-scan-action@master
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      #   with:
-      #     args: >
-      #       -Dsonar.sources=src
-      #       -Dsonar.tests=src
-      #       -Dsonar.inclusions=**/*.spec.ts
-      #       -Dsonar.test.inclusions=**/*.spec.ts
-      #       -Dsonar.coverageReportPaths=coverage/coverage-final.json
-      #       -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-      #       -Dsonar.language=ts
-      # - name: SonarQube Quality Gate
-      #   uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  # sonarqube:
+  #   runs-on: ubuntu-22.04
+  #   needs: [test]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: actions/download-artifact@v4
+  #       name: Download coverage file
+  #       with:
+  #         name: coverage
+  #         path: ./
+  # - name: SonarQube Scan
+  #   uses: sonarsource/sonarqube-scan-action@master
+  #   env:
+  #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  #   with:
+  #     args: >
+  #       -Dsonar.sources=src
+  #       -Dsonar.tests=src
+  #       -Dsonar.inclusions=**/*.spec.ts
+  #       -Dsonar.test.inclusions=**/*.spec.ts
+  #       -Dsonar.coverageReportPaths=coverage/coverage-final.json
+  #       -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+  #       -Dsonar.language=ts
+  # - name: SonarQube Quality Gate
+  #   uses: sonarsource/sonarqube-quality-gate-action@master
+  #   timeout-minutes: 5
+  #   env:
+  #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
   build-and-push-docker-image:
     name: Build and Push Docker Image
     runs-on: ubuntu-22.04
@@ -79,7 +79,8 @@ jobs:
           image: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
           tags: latest, ${{ env.GITHUB_SHA }}
       - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+        # run: echo ${{ steps.docker_build.outputs.digest }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
 
   gitops-versioning:
     runs-on: ubuntu-22.04
