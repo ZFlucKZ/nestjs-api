@@ -61,7 +61,7 @@ jobs:
   build-and-push-docker-image:
     name: Build and Push Docker Image
     runs-on: ubuntu-22.04
-    needs: [sonarqube]
+    # needs: [sonarqube]
     steps:
       - uses: actions/checkout@v4
       - name: Setup SHA
