@@ -1,4 +1,4 @@
-name: CI for NestJS API Develop
+name: CI/CD for NestJS API
 
 on:
   push:
@@ -77,11 +77,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.ref == 'refs/heads/develop' }}
-          # image: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:develop
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.GITHUB_SHA }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-        # run: echo ${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}
 
   gitops-versioning:
     runs-on: ubuntu-22.04
