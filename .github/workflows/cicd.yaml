@@ -99,7 +99,7 @@ jobs:
         run: |
           git clone https://x-access-token:${GH_PAT}@github.com/ZFlucKZ/nonprod-k8s-manifest-2.git
 
-          cd nonprod-k8s-manifest-2/dev/nestjs-app
+          cd nonprod-k8s-manifest-2/dev/nestjs-api
 
           git config user.name "robot"
           git config user.email "robot@pajj.com"
